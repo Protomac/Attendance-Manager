@@ -4,10 +4,12 @@ class CustomerSchema extends Schema {
   constructor() {
     const user = super(
       {
-        CustomerId: { type: Number },
-        CustEmail: { type: String, unique: true },
-        CustContactNum: { type: Number, unique: true },
-        Address: String
+        custId: { type: Number, unique: true},
+        name: {type: String},
+        emailId: { type: String, unique: true },
+        password: {type: String},
+        contactNo: { type: Number, unique: true },
+        address: String
       },
       { timestamps: { createdAt: "created_at" } }
     );
@@ -15,5 +17,5 @@ class CustomerSchema extends Schema {
     return user;
   }
 }
-export default mongoose.model("Customer", new CustomerSchema()); // eslint-disable-line
+export default mongoose.model("customer", new CustomerSchema()); // eslint-disable-line
 //some changes
