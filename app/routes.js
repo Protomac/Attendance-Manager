@@ -1,5 +1,6 @@
 import { isLoggedIn } from "./controllers/_utils";
-import newCust from "../app/controllers/newCust";
+import custCtrl from "./controllers/customer";
+import custSchema from "../app/models/customerModel";
 const bcrypt = require('bcrypt');
 
 export default (app, passport) => {
@@ -54,17 +55,25 @@ export default (app, passport) => {
     );
 
   app.route("/customer-register")
-    .post((req, res) => {
+    .post(async (req, res) => {
       let password = bcrypt.hashSync(req.body.password, 8);
-      console.log(req.body)
-      newCust.addEmp({
-        custId: req.body.custId,
+      //check if id exist in database if yes => Show already exist
+      if (
+        await custSchema.findOne({ emailId: req.body.emailId })
+        ||
+        await custSchema.findOne({ contactNo: req.body.contactNo })
+        ) {
+        res.send("Entity already present")
+        return;
+      }
+      
+      custCtrl.addEmp({
         name: req.body.name,
         emailId: req.body.emailId,
-        password: password,
+        password: password, 
         address: req.body.address,
         contactNo: req.body.contactNo
       });
-      res.send(password)
+      res.send('Entity created')
     })
 };

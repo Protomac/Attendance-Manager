@@ -8,7 +8,6 @@ const custCtrl = {
   addEmp: data => {
     return new Promise(resolve => {
       let newUser = new customer({
-        custId: data.custId,
         name: data.name,
         emailId: data.emailId,
         password: data.password,
@@ -32,7 +31,6 @@ const custCtrl = {
 
 
 // custCtrl.addEmp({
-//   custId: 1,
 //   name: "Customer",
 //   emailId: "customer@gmail.com",
 //   address: "G-3/36 Sector-7 Rohini Delhi-89",

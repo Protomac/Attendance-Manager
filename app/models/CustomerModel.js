@@ -4,7 +4,6 @@ class CustomerSchema extends Schema {
   constructor() {
     const user = super(
       {
-        custId: { type: Number, unique: true},
         name: {type: String},
         emailId: { type: String, unique: true },
         password: {type: String},
