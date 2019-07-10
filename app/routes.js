@@ -67,7 +67,7 @@ export default (app, passport) => {
         return;
       }
       
-      custCtrl.addEmp({
+      custCtrl.add({
         name: req.body.name,
         emailId: req.body.emailId,
         password: password, 

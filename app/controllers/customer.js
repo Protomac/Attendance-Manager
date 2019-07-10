@@ -1,11 +1,10 @@
-import express from "express";
 import { secret, errorObj, successObj } from "../../config/settings";
 import customer from "../models/customerModel";
 const console = require("tracer").colorConsole();
 
 const custCtrl = {
   msgg: "hello",
-  addEmp: data => {
+  add: data => {
     return new Promise(resolve => {
       let newUser = new customer({
         name: data.name,
@@ -21,8 +20,8 @@ const custCtrl = {
       });
     });
   },
-  listEmp: () => {
-    newEmployee.find({}).exec(function(err, users) {
+  list: () => {
+    customer.find({}).exec(function(err, users) {
       if (err) throw err;
       console.log(users);
     });
@@ -30,7 +29,7 @@ const custCtrl = {
 };
 
 
-// custCtrl.addEmp({
+// custCtrl.add({
 //   name: "Customer",
 //   emailId: "customer@gmail.com",
 //   address: "G-3/36 Sector-7 Rohini Delhi-89",
@@ -38,6 +37,6 @@ const custCtrl = {
 // });
 
 
-// empCtrl.listEmp();
+// custCtrl.list();
 
 export default custCtrl;
