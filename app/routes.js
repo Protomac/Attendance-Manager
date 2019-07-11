@@ -1,6 +1,6 @@
 import { isLoggedIn } from "./controllers/_utils";
 import custCtrl from "./controllers/customer";
-import custSchema from "../app/models/customerModel";
+import custSchema from "../app/models/customer";
 const bcrypt = require('bcrypt');
 import TicketCtrl from "./controllers/ticket";
 
@@ -58,25 +58,26 @@ export default (app, passport) => {
 
   app.route("/register/customer")
     .post(async (req, res) => {
-      let password = bcrypt.hashSync(req.body.password, 8);
       //check if id exist in database if yes => Show already exist
       if (
         await custSchema.findOne({ emailId: req.body.emailId })
         ||
         await custSchema.findOne({ contactNo: req.body.contactNo })
-        ) {
-        res.send("Entity already present")
+      ) {
+        res.send("customer already present")
         return;
       }
+      const customer = await custCtrl.add(req.body);
+      res.send(customer)
+    })
+
+  app
+    .route("/customer/:id/profile")
+    .get(async (req, res) => {
+      //get data from custCtrl profile
+      const profile = await custCtrl.profileInfo(req.params.id)
       
-      custCtrl.add({
-        name: req.body.name,
-        emailId: req.body.emailId,
-        password: password, 
-        address: req.body.address,
-        contactNo: req.body.contactNo
-      });
-      res.send('Entity created')
+      res.send(profile)
     })
 
   app
@@ -84,16 +85,16 @@ export default (app, passport) => {
     .post(async (req, res) => {
       const addedTicket = await TicketCtrl.addTickets({ custId: req.params.id, ...req.body });
       res.json(addedTicket);
-      }
+    }
     );
-    
+
   app
     .route("/tickets/:id")
     .get(async (req, res) => {
       const tickets = await TicketCtrl.listTickets({ custId: req.params.id });
-      res.send(tickets)      
-      }
-     );
+      res.send(tickets)
+    }
+    );
 
   app
     .route("/customer/:id/dashboard")

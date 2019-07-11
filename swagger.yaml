@@ -24,7 +24,7 @@ paths:
     post:
       tags:
         - "ticketSupportCustomer"
-      summary: customer login
+      summary: customer register
       operationId: customerRegistor
       consumes:
         -application/json
@@ -38,9 +38,11 @@ paths:
           schema:
             type: object
             properties:
+              custId:
+                type : string
               name:
                 type : string
-              emailId:
+              email:
                 type : string
               address:
                 type : string
@@ -100,6 +102,29 @@ paths:
         - "ticketSupportCustomer"
       summary:  list of tickets
       operationId: ticketsList
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  
+  /customer/{id}/profile:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  customer profile
+      operationId: customerProfile
       consumes:
         -application/json
 

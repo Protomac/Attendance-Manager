@@ -1,42 +1,58 @@
+import _ from 'lodash';
 import { secret, errorObj, successObj } from "../../config/settings";
-import customer from "../models/customerModel";
+import custSchema from "../models/customer";
 const console = require("tracer").colorConsole();
+const bcrypt = require('bcrypt');
 
 const custCtrl = {
-  msgg: "hello",
   add: data => {
     return new Promise(resolve => {
-      let newUser = new customer({
-        name: data.name,
-        emailId: data.emailId,
-        password: data.password,
-        address: data.address,
-        contactNo: data.contactNo
-      });
-      newUser.save(function(err) {
+      let newEntity = new custSchema();
+      _.each(data, (val, key) => {
+        if(key == "password"){
+          let password = bcrypt.hashSync(data.password, 8);
+          newEntity[key] = password
+        } else {
+          newEntity[key] = val
+        }
+      })
+      newEntity.save(function (err, data) {
         if (err) {
           console.log(err);
+          return resolve({...errorObj, message:"Customer unable to save.",err})
         }
+        return resolve({...successObj, data})
       });
     });
   },
-  list: () => {
-    customer.find({}).exec(function(err, users) {
-      if (err) throw err;
-      console.log(users);
-    });
-  }
+  getById: (customerId) => {
+    return new Promise((resolve) => {
+      custSchema.findOne({ customerId })
+        .exec((err, data) => {
+
+          if (!data) {
+            return resolve({ ...errorObj, message: 'Customer not found', err })
+          }
+
+          return resolve({ ...successObj, data })
+
+        })
+    })
+  },
+  profileInfo: (id) => {
+    return new Promise(resolve => {
+      custSchema.find({ custId: id }).exec(function (err, entity) {
+        if (err || entity.length == 0) {
+          console.log(err)
+          resolve({ ...errorObj, error: true, message: "cannot load the profile", err })
+        }
+        resolve({ ...successObj, error: false, message: "Profile found", data: entity })
+      })
+    })
+  },
 };
 
 
-// custCtrl.add({
-//   name: "Customer",
-//   emailId: "customer@gmail.com",
-//   address: "G-3/36 Sector-7 Rohini Delhi-89",
-//   contactNo: 1232067891
-// });
 
-
-// custCtrl.list();
 
 export default custCtrl;
