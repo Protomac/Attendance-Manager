@@ -57,6 +57,76 @@ paths:
           schema:
             $ref: "#/definitions/ApiResponse"
 
+  /customer/{id}/dashboard:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  dashboard of the customer
+      operationId: customerDashboard
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse" 
+            
+  
+  /customer/{id}/profile:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  customer profile
+      operationId: customerProfile
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"  
+    
+  /tickets/{id}:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  list all tickets
+      operationId: ticketsList
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
   /customer/{id}:
     post:
       tags:
@@ -95,52 +165,6 @@ paths:
           description: successful operation
           schema:
             $ref: "#/definitions/ApiResponse"
-
-  /tickets/{id}:
-    get:
-      tags:
-        - "ticketSupportCustomer"
-      summary:  list of tickets
-      operationId: ticketsList
-      consumes:
-        -application/json
-
-      produces:
-        -application/json
-      parameters:
-        - in: path
-          name: id
-          description: id of the customer
-          required: true
-          type: string
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/ApiResponse"
-  
-  /customer/{id}/profile:
-    get:
-      tags:
-        - "ticketSupportCustomer"
-      summary:  customer profile
-      operationId: customerProfile
-      consumes:
-        -application/json
-
-      produces:
-        -application/json
-      parameters:
-        - in: path
-          name: id
-          description: id of the customer
-          required: true
-          type: string
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/ApiResponse"
    
   /tickets/{id}/{status}:
     get:
@@ -169,31 +193,7 @@ paths:
           description: successful operation
           schema:
             $ref: "#/definitions/ApiResponse"          
-  
-  /customer/{id}/dashboard:
-    get:
-      tags:
-        - "ticketSupportCustomer"
-      summary:  dashboard of the customer
-      operationId: customerDashboard
-      consumes:
-        -application/json
-
-      produces:
-        -application/json
-      parameters:
-        - in: path
-          name: id
-          description: id of the customer
-          required: true
-          type: string
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/ApiResponse" 
           
-
   /customer/{_id}:
     get:
       tags:
