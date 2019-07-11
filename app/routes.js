@@ -1,6 +1,6 @@
 import { isLoggedIn } from "./controllers/_utils";
 import custCtrl from "./controllers/customer";
-import custSchema from "../app/models/customerModel";
+import custSchema from "../app/models/customer";
 const bcrypt = require('bcrypt');
 import TicketCtrl from "./controllers/ticket";
 
@@ -56,27 +56,35 @@ export default (app, passport) => {
       })
     );
 
-  app.route("/customer-register")
+  app
+    .route("/customer-register")
+    .get((req, res) => {
+      res.render("test.ejs")
+    })
     .post(async (req, res) => {
-      let password = bcrypt.hashSync(req.body.password, 8);
       //check if id exist in database if yes => Show already exist
       if (
         await custSchema.findOne({ emailId: req.body.emailId })
         ||
         await custSchema.findOne({ contactNo: req.body.contactNo })
-        ) {
-        res.send("Entity already present")
+      ) {
+        res.send("customer already present")
         return;
       }
-      
-      custCtrl.add({
-        name: req.body.name,
-        emailId: req.body.emailId,
-        password: password, 
-        address: req.body.address,
-        contactNo: req.body.contactNo
-      });
-      res.send('Entity created')
+      custCtrl.add(req.body);
+      res.send('customer created')
+    })
+
+  app
+    .route("/customer/:id/profile")
+    .get(async (req, res) => {
+      //get data from custCtrl profile
+      let { error, message, entity: entityInfo } = await custCtrl.profileInfo(req.params.id)
+      if (error == true) {
+        res.send(message + '\n' + entityInfo)
+        return;
+      }
+      res.send(message + '\n' + entityInfo)
     })
 
   app
@@ -84,52 +92,51 @@ export default (app, passport) => {
     .post(async (req, res) => {
       const addedTicket = await TicketCtrl.addTickets({ custId: req.params.id, ...req.body });
       res.json(addedTicket);
-      }
+    }
     );
-    
+
   app
     .route("/cust/:id/tickets")
     .get(async (req, res) => {
       const tickets = await TicketCtrl.listTickets({ custId: req.params.id });
-      res.send(tickets)      
-      }
-     );
+      res.send(tickets)
+    }
+    );
 
   app
     .route("/cust/:id/active")
-    .get(async (req, res)=>{
-      const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "A"})
+    .get(async (req, res) => {
+      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "A" })
       res.send(activeTickets);
     })
-    
+
   app
     .route("/cust/:id/closed")
-    .get(async (req, res)=>{
-      const closedTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "C"})
+    .get(async (req, res) => {
+      const closedTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "C" })
       res.send(closedTickets);
     })
 
   app
     .route("/cust/:id/ticket/:_id")
-    .get(async (req, res)=>{
-      const ticketDetails = await TicketCtrl.listTickets({custId: req.params.id, _id : req.params._id})
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.listTickets({ custId: req.params.id, _id: req.params._id })
       res.send(ticketDetails);
     })
 
   app
     .route("/cust/:id/dashboard")
-    .get(async (req, res)=>{
-      const ticketDetails = await TicketCtrl.dashboard({custId: req.params.id})
-      const closedTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "C"})
-      const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "A"})
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.dashboard({ custId: req.params.id })
+      const closedTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "C" })
+      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "A" })
       const totalTickets = await TicketCtrl.listTickets({ custId: req.params.id });
 
       const ticketLength = {
-        closed:closedTickets.ticket.length,
-        active : activeTickets.ticket.length,
-        total : totalTickets.ticket.length
+        closed: closedTickets.ticket.length,
+        active: activeTickets.ticket.length,
+        total: totalTickets.ticket.length
       }
-      res.send({...ticketLength, ticketDetails});
+      res.send({ ...ticketLength, ticketDetails });
     })
-
 };
