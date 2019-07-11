@@ -15,7 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-node6": "^11.0.0",
     "bcrypt": "^3.0.6",
-    "bcrypt-nodejs": "latest",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.18.3",
     "capitalize": "^2.0.0",
     "compression": "^1.7.2",

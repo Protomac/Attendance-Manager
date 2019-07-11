@@ -21,9 +21,9 @@ import passportConfig from "./config/passport";
 
 // routes ======================================================================
 import routes from "./app/routes";
-// import authRoutes from "./app/authRoutes";
-import getAttendance from "./app/controllers/getAttendance";
-import newEmp from "./app/controllers/newEmp";
+// // import authRoutes from "./app/authRoutes";
+// import getAttendance from "./app/controllers/";
+// import newEmp from "./app/controllers/newEmp";
 
 const app = express();
 const swaggerDocument = YAML.load("./swagger.yaml");

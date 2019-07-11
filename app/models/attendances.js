@@ -6,7 +6,6 @@ class AttendanceSchema extends Schema {
       {
         employeeId: { type: Number },
         inTime: { type: Date },
-        // type: { type: String, enum: ["IN", "OUT"] }
         outTime: { type: Date },
         date: { type: Date },
         machineId: Number

@@ -1,14 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
-class AllTicketsSchema extends Schema {
+class TicketsSchema extends Schema {
   constructor() {
     const user = super(
       {
-        ticketId: { type: String, unique: true },
+        ticketId: { type: String },
         status: { type: String },
-        CustId: { type: String },
+        custId: { type: String },
         EmpId: { type: String },
         title: String,
+        description:String,
         category: String,
         opendOn: Date,
         updatedOn: Date,
@@ -23,4 +24,4 @@ class AllTicketsSchema extends Schema {
     return user;
   }
 }
-export default mongoose.model("AllTickets", new AllTicketsSchema()); // eslint-disable-line
+export default mongoose.model("Tickets", new TicketsSchema()); // eslint-disable-line
