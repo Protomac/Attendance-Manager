@@ -9,7 +9,6 @@ const TicketsCtrl = {
     return new Promise(resolve => {
       let newEntity = new TicketSchema();
 
-        newEntity.title= data.title
         newEntity.description= data.description
         newEntity.reason= data.reason
         newEntity.custId= data.custId
@@ -20,7 +19,7 @@ const TicketsCtrl = {
           console.log(err);
           resolve({...errorObj, message:"Ticket unable to create."})
         }
-        resolve({...successObj, newEntity})
+        resolve({...successObj, data :  newEntity})
       });
     });
   },
