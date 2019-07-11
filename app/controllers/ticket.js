@@ -12,7 +12,7 @@ const TicketsCtrl = {
         newEntity.description= data.description
         newEntity.reason= data.reason
         newEntity.custId= data.custId
-        newEntity.status = data.status
+        newEntity.status = "A"
 
       newEntity.save(function(err) {
         if (err) {
@@ -35,7 +35,7 @@ const TicketsCtrl = {
         if(!ticket.length){
           return resolve({...errorObj,message:"Ticket not found"})
         }
-        return resolve({ ...successObj, ticket });
+        return resolve({ ...successObj, data : ticket });
       });
     });
   },
@@ -49,14 +49,14 @@ const TicketsCtrl = {
       recentTickets.where({created_at : {$gte : startDate}})
       recentTickets.lean()
 
-      recentTickets.exec(function(err, ticket) {
+      recentTickets.exec(function(err, tickets) {
         if (err) {
           return resolve({...errorObj,message:"Tickets not found",err})
         };
-        if(!ticket.length){
+        if(!tickets.length){
           return resolve({...errorObj,message:"Tickets not found"})
         }
-        return resolve({ ...successObj, ticket });
+        return resolve({ ...successObj, tickets });
       });    })
   }
 };

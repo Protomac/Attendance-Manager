@@ -8,7 +8,7 @@ class CustomerSchema extends Schema {
         custId : {type: String},
         emailId: { type: String, unique: true },
         password: {type: String},
-        contactNo: { type: Number, unique: true },
+        mobile: { type: Number, unique: true },
         address: String
       },
       { timestamps: { createdAt: "created_at" } }
