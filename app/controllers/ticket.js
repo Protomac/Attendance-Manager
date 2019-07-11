@@ -13,6 +13,7 @@ const TicketsCtrl = {
         newEntity.description= data.description
         newEntity.reason= data.reason
         newEntity.custId= data.custId
+        newEntity.empId= data.empId
         newEntity.status = data.status
 
       newEntity.save(function(err) {

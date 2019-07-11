@@ -4,9 +4,16 @@ class AddEmployee extends Schema {
   constructor() {
     const user = super(
       {
-        employeeId: { type: Number },
-        name: String,
-        contactnumber: { type: Number, unique: true }
+        empId: { type: Number, unique: true },
+        check: { type: String, enum: ['emp', 'admin'], default: 'emp' },
+        name: { type: String },
+        emailId: { type: String, unique: true },
+        password: { type: String },
+        contactNo: { type: Number, unique: true },
+        address: { type: String },
+        gender: { type: String },
+        salary: { type: Number },
+        joiningDate: { type: Date },
       },
       { timestamps: { createdAt: "created_at" } }
     );
@@ -14,4 +21,5 @@ class AddEmployee extends Schema {
     return user;
   }
 }
-export default mongoose.model("NewEmp", new AddEmployee()); // eslint-disable-line
+export default mongoose.model("employee", new AddEmployee()); // eslint-disable-line
+

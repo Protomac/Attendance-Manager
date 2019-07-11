@@ -1,9 +1,13 @@
 import { isLoggedIn } from "./controllers/_utils";
+import { errorObj, successObj } from "../config/settings";
 import custCtrl from "./controllers/customer";
-import custSchema from "../app/models/customer";
-const bcrypt = require('bcrypt');
+import empCtrl from "./controllers/employee";
+import CustSchema from "../app/models/customer";
+import TicketSchema from "../app/models/tickets";
 import TicketCtrl from "./controllers/ticket";
-
+import moment from "moment";
+const bcrypt = require('bcrypt');
+const console = require("tracer").colorConsole();
 
 export default (app, passport) => {
   app.get("/", (req, res) => {
@@ -64,9 +68,9 @@ export default (app, passport) => {
     .post(async (req, res) => {
       //check if id exist in database if yes => Show already exist
       if (
-        await custSchema.findOne({ emailId: req.body.emailId })
+        await CustSchema.findOne({ emailId: req.body.emailId })
         ||
-        await custSchema.findOne({ contactNo: req.body.contactNo })
+        await CustSchema.findOne({ contactNo: req.body.contactNo })
       ) {
         res.send("customer already present")
         return;
@@ -76,15 +80,11 @@ export default (app, passport) => {
     })
 
   app
-    .route("/customer/:id/profile")
+    .route("/cust/:id/profile")
     .get(async (req, res) => {
-      //get data from custCtrl profile
-      let { error, message, entity: entityInfo } = await custCtrl.profileInfo(req.params.id)
-      if (error == true) {
-        res.send(message + '\n' + entityInfo)
-        return;
-      }
-      res.send(message + '\n' + entityInfo)
+      //get data from Ctrl profile
+      let data = await custCtrl.profileInfo(req.params.id)
+      res.send(data)
     })
 
   app
@@ -139,4 +139,64 @@ export default (app, passport) => {
       }
       res.send({ ...ticketLength, ticketDetails });
     })
+
+  //====================================Employee routes====================================
+  app
+    .route("/register/employee")
+    .get((req, res) => {
+      res.render("create employee form")
+    })
+    .post(async (req, res) => {
+      const addedEmp = await empCtrl.add(req.body);
+      res.send(addedEmp);
+    })
+
+  app
+    .route("/employee/:id/profile")
+    .get(async (req, res) => {
+      //get data from Ctrl profile
+      let data = await empCtrl.profileInfo(req.params.id)
+      res.send(data)
+    })
+
+  app
+    .route("/employee/:id/dashboard")
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.dashboard({ empId: req.params.id })
+      const assignedTickets = await TicketSchema.count({ empId: req.params.id })
+      const activeTickets = await TicketCtrl.listTickets({ empId: req.params.id, status: "A" })
+      const resolvedTickets = await TicketCtrl.listTickets({ empId: req.params.id, status: "C" })
+      const ticketsToday = await TicketCtrl.listTickets({ empId: req.params.id, created_at: { $lte: moment().endOf('day'), $gte: moment().startOf('day') } });
+
+      const ticketLength = {
+        assigned: assignedTickets,
+        active: activeTickets.ticket.length,
+        resolved: resolvedTickets.ticket.length,
+        today: ticketsToday.ticket.length,
+      }
+      res.send({ ...ticketLength, ticketDetails });
+    })
+
+  app
+    .route("/employee/:id/tickets")
+    .get(async (req, res) => {
+      const tickets = await TicketCtrl.listTickets({ empId: req.params.id });
+      res.send(tickets)
+    }
+    );
+
+  app
+    .route("/employee/:id/:status")
+    .get(async (req, res) => {
+      const Tickets = await TicketCtrl.listTickets({ empId: req.params.id, status: req.params.status })
+      res.send(Tickets);
+    })
+
+  app
+    .route("/detailedticket/:id")
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.listTickets({ _id: req.params.id })
+      res.send(ticketDetails);
+    })
+  //========================================================================================
 };

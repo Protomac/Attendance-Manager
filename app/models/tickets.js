@@ -7,7 +7,7 @@ class TicketsSchema extends Schema {
         ticketId: { type: String },
         status: { type: String },
         custId: { type: String },
-        EmpId: { type: String },
+        empId: { type: String },
         title: String,
         description:String,
         category: String,
