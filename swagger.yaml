@@ -17,7 +17,7 @@ tags:
   - name: auth
     description: all functions related user accounts
   - name : ticketSupportCustomer
-    description : all functions related customer
+    description : all functions related to customer
 
 paths:
   /register/customer:
