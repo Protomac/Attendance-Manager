@@ -68,6 +68,20 @@ const TicketsCtrl = {
       })
     })
   },
+  Update : (id, changes) => {
+    return new Promise ((resolve) => {
+      TicketSchema.findOneAndUpdate({_id: id }, changes, () => {
+        
+        TicketSchema.find({_id: id }, (err, data) => {
+          if (err) {
+            return resolve({...successObj, message:"error in updating ticket", err})
+          }
+          return resolve({...successObj, message:"Ticket Updated", data})
+        })
+
+      })
+    })
+  },
 };
 
 export default TicketsCtrl;

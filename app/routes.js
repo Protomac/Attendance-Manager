@@ -2,6 +2,8 @@ import { isLoggedIn } from "./controllers/_utils";
 import custCtrl from "./controllers/customer";
 import empCtrl from "./controllers/employee";
 import TicketCtrl from "./controllers/ticket";
+import Async from 'async'
+import TicketSchema from "./models/tickets";
 import moment from "moment";
 const bcrypt = require('bcrypt');
 const console = require("tracer").colorConsole();
@@ -68,14 +70,14 @@ export default (app, passport) => {
     .get(async (req, res) => {
       //get data from custCtrl profile
       const profile = await custCtrl.profileInfo(req.params.id)
-      
+
       res.send(profile)
     })
 
   app
     .route("/customer/:id")
     .post(async (req, res) => {
-      const addedTicket = await TicketCtrl.addTickets({ custId: req.params.id, ...req.body });
+      const addedTicket = await TicketCtrl.addTickets({ custId: req.params.id, updatedOn: new Date(), ...req.body });
       res.json(addedTicket);
     }
     );
@@ -90,32 +92,32 @@ export default (app, passport) => {
 
   app
     .route("/customer/:id/dashboard")
-    .get(async (req, res)=>{
-       const ticketDetails = await TicketCtrl.dashboard({custId: req.params.id})
-       const closedTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "C"})
-       const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "A"})
-       const totalTickets = await TicketCtrl.listTickets({ custId: req.params.id });
- 
-       const ticketLength = {
-         closed: closedTickets.data.length,
-         active : activeTickets.data.length,
-         total : totalTickets.data.length
-       }
-       ticketDetails.data = {
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.dashboard({ custId: req.params.id })
+      const closedTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "C" })
+      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "A" })
+      const totalTickets = await TicketCtrl.listTickets({ custId: req.params.id });
+
+      const ticketLength = {
+        closed: closedTickets.data.length,
+        active: activeTickets.data.length,
+        total: totalTickets.data.length
+      }
+      ticketDetails.data = {
         ...ticketLength,
-        tickets : [...ticketDetails.data]
-       }
-     
-       res.send(ticketDetails);
-     })
+        tickets: [...ticketDetails.data]
+      }
+
+      res.send(ticketDetails);
+    })
 
   app
     .route("/tickets/:id/:status")
-    .get(async (req, res)=>{
-      const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : req.params.status})
+    .get(async (req, res) => {
+      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: req.params.status })
       res.send(activeTickets);
     })
-    
+
   // app
   //   .route("/customer/:id/:status")
   //   .get(async (req, res)=>{
@@ -125,8 +127,8 @@ export default (app, passport) => {
 
   app
     .route("/customer/:_id")
-    .get(async (req, res)=>{
-      const ticketDetails = await TicketCtrl.listTickets({_id : req.params._id})
+    .get(async (req, res) => {
+      const ticketDetails = await TicketCtrl.listTickets({ _id: req.params._id })
       res.send(ticketDetails);
     })
 
@@ -183,10 +185,25 @@ export default (app, passport) => {
     })
 
   app
-    .route("/detailedticket/:_id")
+    .route("/detailedticket/:_id/")
     .get(async (req, res) => {
       const ticketDetails = await TicketCtrl.listTickets({ _id: req.params._id })
       res.send(ticketDetails);
+    })
+    .put(async (req, res) => {
+      let dataArr = []
+      console.log(req.body)
+      Async.each(req.body.id, (val, next) => {
+        const changes = { ...req.body.changes, updatedOn: new Date() }
+        console.log(val, changes)
+        TicketCtrl.Update(val, changes).then((data)=>{
+          console.log(data)
+          dataArr.push(data)
+          next()
+        })
+      }, () => {
+        res.send(dataArr)
+      })
     })
   //========================================================================================
 };
