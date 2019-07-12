@@ -60,11 +60,7 @@ export default (app, passport) => {
       })
     );
 
-  app
-    .route("/customer-register")
-    .get((req, res) => {
-      res.render("test.ejs")
-    })
+  app.route("/register/customer")
     .post(async (req, res) => {
       //check if id exist in database if yes => Show already exist
       if (
@@ -75,20 +71,21 @@ export default (app, passport) => {
         res.send("customer already present")
         return;
       }
-      custCtrl.add(req.body);
-      res.send('customer created')
+      const customer = await custCtrl.add(req.body);
+      res.send(customer)
     })
 
   app
     .route("/cust/:id/profile")
     .get(async (req, res) => {
-      //get data from Ctrl profile
-      let data = await custCtrl.profileInfo(req.params.id)
-      res.send(data)
+      //get data from custCtrl profile
+      const profile = await custCtrl.profileInfo(req.params.id)
+      
+      res.send(profile)
     })
 
   app
-    .route("/cust/:id/create")
+    .route("/customer/:id")
     .post(async (req, res) => {
       const addedTicket = await TicketCtrl.addTickets({ custId: req.params.id, ...req.body });
       res.json(addedTicket);
@@ -96,7 +93,7 @@ export default (app, passport) => {
     );
 
   app
-    .route("/cust/:id/tickets")
+    .route("/tickets/:id")
     .get(async (req, res) => {
       const tickets = await TicketCtrl.listTickets({ custId: req.params.id });
       res.send(tickets)
@@ -104,40 +101,44 @@ export default (app, passport) => {
     );
 
   app
-    .route("/cust/:id/active")
-    .get(async (req, res) => {
-      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "A" })
+    .route("/customer/:id/dashboard")
+    .get(async (req, res)=>{
+       const ticketDetails = await TicketCtrl.dashboard({custId: req.params.id})
+       const closedTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "C"})
+       const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : "A"})
+       const totalTickets = await TicketCtrl.listTickets({ custId: req.params.id });
+ 
+       const ticketLength = {
+         closed: closedTickets.data.length,
+         active : activeTickets.data.length,
+         total : totalTickets.data.length
+       }
+       const data = {
+         ...ticketDetails,
+         ...ticketLength
+       }
+       res.send({data});
+     })
+
+  app
+    .route("/tickets/:id/:status")
+    .get(async (req, res)=>{
+      const activeTickets = await TicketCtrl.listTickets({custId: req.params.id, status : req.params.status})
       res.send(activeTickets);
     })
+    
+  // app
+  //   .route("/customer/:id/:status")
+  //   .get(async (req, res)=>{
+  //     const closedTickets = await TicketCtrl.listTickets({custId: req.params.id, status : req.params.status})
+  //     res.send(closedTickets);
+  //   })
 
   app
-    .route("/cust/:id/closed")
-    .get(async (req, res) => {
-      const closedTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "C" })
-      res.send(closedTickets);
-    })
-
-  app
-    .route("/cust/:id/ticket/:_id")
-    .get(async (req, res) => {
-      const ticketDetails = await TicketCtrl.listTickets({ custId: req.params.id, _id: req.params._id })
+    .route("/customer/:_id")
+    .get(async (req, res)=>{
+      const ticketDetails = await TicketCtrl.listTickets({_id : req.params._id})
       res.send(ticketDetails);
-    })
-
-  app
-    .route("/cust/:id/dashboard")
-    .get(async (req, res) => {
-      const ticketDetails = await TicketCtrl.dashboard({ custId: req.params.id })
-      const closedTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "C" })
-      const activeTickets = await TicketCtrl.listTickets({ custId: req.params.id, status: "A" })
-      const totalTickets = await TicketCtrl.listTickets({ custId: req.params.id });
-
-      const ticketLength = {
-        closed: closedTickets.ticket.length,
-        active: activeTickets.ticket.length,
-        total: totalTickets.ticket.length
-      }
-      res.send({ ...ticketLength, ticketDetails });
     })
 
   //====================================Employee routes====================================

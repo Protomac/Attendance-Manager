@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import { secret, errorObj, successObj } from "../../config/settings";
-import CustSchema from "../models/customer";
+import custSchema from "../models/customer";
 const console = require("tracer").colorConsole();
 const bcrypt = require('bcrypt');
 
 const custCtrl = {
   add: data => {
     return new Promise(resolve => {
-      let newEntity = new CustSchema();
+      let newEntity = new custSchema();
       _.each(data, (val, key) => {
         if(key == "password"){
           let password = bcrypt.hashSync(data.password, 8);
@@ -16,16 +16,18 @@ const custCtrl = {
           newEntity[key] = val
         }
       })
-      newEntity.save(function (err) {
+      newEntity.save(function (err, data) {
         if (err) {
           console.log(err);
+          return resolve({...errorObj, message:"Customer unable to save.",err})
         }
+        return resolve({...successObj, data})
       });
     });
   },
   getById: (customerId) => {
     return new Promise((resolve) => {
-      CustSchema.findOne({ customerId })
+      custSchema.findOne({ customerId })
         .exec((err, data) => {
 
           if (!data) {
@@ -39,23 +41,17 @@ const custCtrl = {
   },
   profileInfo: (id) => {
     return new Promise(resolve => {
-      CustSchema.find({ _id: id }).exec(function (err, entity) {
+      custSchema.find({ custId: id }).exec(function (err, entity) {
         if (err || entity.length == 0) {
           console.log(err)
-          resolve({ ...errorObj, error: true, message: "Cannot find customer", entity })
+          resolve({ ...errorObj, error: true, message: "cannot load the profile", err })
         }
-        resolve({ ...successObj, error: false, message: "Customer found", entity })
+        resolve({ ...successObj, error: false, message: "Profile found", data: entity })
       })
     })
   },
 };
 
 
-// custCtrl.add({
-//   name: "CustSchema",
-//   emailId: "CustSchema@gmail.com",
-//   address: "G-3/36 Sector-7 Rohini Delhi-89",
-//   contactNo: 1232067891
-// });
 
 export default custCtrl;

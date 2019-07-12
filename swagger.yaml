@@ -16,8 +16,207 @@ schemes:
 tags:
   - name: auth
     description: all functions related user accounts
+  - name : ticketSupportCustomer
+    description : all functions related to customer
 
 paths:
+  /register/customer:
+    post:
+      tags:
+        - "ticketSupportCustomer"
+      summary: customer register
+      operationId: customerRegistor
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              custId:
+                type : string
+              name:
+                type : string
+              email:
+                type : string
+              address:
+                type : string
+              mobile:
+                type : string
+              password:
+                type: string
+
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
+  /customer/{id}/dashboard:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  dashboard of the customer
+      operationId: customerDashboard
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse" 
+            
+  
+  /customer/{id}/profile:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  customer profile
+      operationId: customerProfile
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"  
+    
+  /tickets/{id}:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  list all tickets
+      operationId: ticketsList
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
+  /customer/{id}:
+    post:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  create ticket
+      operationId: createticket
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type : string
+              description:
+                type : string
+              custId : id
+              comments :
+                type : array
+                items : 
+                  type : object
+              
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+   
+  /tickets/{id}/{status}:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  ticket list according to status
+      operationId: ticketsAccordingToStatus
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the customer
+          required: true
+          type: string
+        - in: path
+          name: status
+          description: status of the tickets
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"          
+          
+  /customer/{_id}:
+    get:
+      tags:
+        - "ticketSupportCustomer"
+      summary:  details of the ticket
+      operationId: ticketDetail
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: _id
+          description: _id of the ticket
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse" 
+
   /login:
     post:
       tags:
