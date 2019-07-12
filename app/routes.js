@@ -101,11 +101,12 @@ export default (app, passport) => {
          active : activeTickets.data.length,
          total : totalTickets.data.length
        }
-       const data = {
-         ...ticketDetails,
-         ...ticketLength
+       ticketDetails.data = {
+        ...ticketLength,
+        tickets : [...ticketDetails.data]
        }
-       res.send({data});
+     
+       res.send(ticketDetails);
      })
 
   app

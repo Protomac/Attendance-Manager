@@ -55,7 +55,7 @@ const TicketsCtrl = {
         if(!tickets.length){
           return resolve({...errorObj,message:"Tickets not found"})
         }
-        return resolve({ ...successObj, tickets });
+        return resolve({ ...successObj, data : tickets });
       });    })
   },
   count : (data) => {
