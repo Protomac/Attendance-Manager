@@ -18,6 +18,8 @@ tags:
     description: all functions related user accounts
   - name : ticketSupportCustomer
     description : all functions related to customer
+  - name : ticketSupportEmployee
+    description: all functions related to employee
 
 paths:
   /register/customer:
@@ -377,6 +379,178 @@ paths:
           schema:
             $ref: '#/definitions/ApiResponse'
 
+# ==========================Employee API==========================
+
+  /register/employee:
+    post:
+      tags:
+        - "ticketSupportEmployee"
+      summary: employee register
+      operationId: employeeRegistor
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              empId:
+                type : string
+              name:
+                type : string
+              email:
+                type : string
+                format: email
+              address:
+                type : string
+              mobile:
+                type : string
+              password:
+                type: string
+                format: password
+              check:
+                type: string
+                enum: [emp, admin]
+              gender:
+                type: string
+              salary:
+                type: number
+              joiningDate:
+                type: string
+                format: date
+
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
+  /employee/{id}/profile:
+    get:
+      tags:
+        - "ticketSupportEmployee"
+      summary:  employee profile
+      operationId: employeeProfile
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the employee
+          required: true
+          type: number
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"  
+
+  /employee/{id}/dashboard:
+    get:
+      tags:
+        - "ticketSupportEmployee"
+      summary:  dashboard of the employee
+      operationId: employeeDashboard
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the employee
+          required: true
+          type: number
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
+  /employee/{id}/tickets:
+    get:
+      tags:
+        - "ticketSupportEmployee"
+      summary:  list all tickets assigned to employee
+      operationId: employeeTicketList
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the employee
+          required: true
+          type: number
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
+  /employee/{id}/{status}:
+    get:
+      tags:
+        - "ticketSupportEmployee"
+      summary:  list all tickets assigned to employee according to status
+      operationId: empTicketsAccToStatus
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the employee
+          required: true
+          type: number
+        - in: path
+          name: status
+          description: status of the tickets
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse"          
+  
+  /detailedticket/{_id}:
+    get:
+      tags:
+        - "ticketSupportEmployee"
+      summary:  details of the ticket assigned to employee
+      operationId: employeeTicketDetail
+      consumes:
+        -application/json
+
+      produces:
+        -application/json
+      parameters:
+        - in: path
+          name: id
+          description: id of the ticket
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ApiResponse" 
+
+# ================================================================
 
 securityDefinitions:
   bearerAuth:

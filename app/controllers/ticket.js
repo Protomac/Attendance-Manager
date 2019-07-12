@@ -1,5 +1,6 @@
+import _ from 'lodash'
 import TicketSchema from "../models/tickets";
-import { secret, errorObj, successObj } from "../../config/settings";
+import { errorObj, successObj } from "../../config/settings";
 
 const console = require("tracer").colorConsole();
 const moment = require("moment");
@@ -8,12 +9,9 @@ const TicketsCtrl = {
   addTickets: (data) => {
     return new Promise(resolve => {
       let newEntity = new TicketSchema();
-
-        newEntity.description= data.description
-        newEntity.reason= data.reason
-        newEntity.custId= data.custId
-        newEntity.empId= data.empId
-        newEntity.status = "N"
+      _.each(data, (val, key) => {
+          newEntity[key] = val
+      })
 
       newEntity.save(function(err) {
         if (err) {
@@ -59,7 +57,17 @@ const TicketsCtrl = {
         }
         return resolve({ ...successObj, tickets });
       });    })
-  }
+  },
+  count : (data) => {
+    return new Promise ((resolve) => {
+      TicketSchema.count(data, (err, count)=>{
+        if (err) {
+          return resolve(err)
+        }
+        return resolve(count)
+      })
+    })
+  },
 };
 
 export default TicketsCtrl;

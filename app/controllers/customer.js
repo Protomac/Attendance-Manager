@@ -16,12 +16,12 @@ const custCtrl = {
           newEntity[key] = val
         }
       })
-      newEntity.save(function (err, data) {
+      newEntity.save(function (err, entity) {
         if (err) {
           console.log(err);
           return resolve({...errorObj, message:"Customer unable to save.",err})
         }
-        return resolve({...successObj, data})
+        return resolve({...successObj, data: entity})
       });
     });
   },

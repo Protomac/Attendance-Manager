@@ -1,9 +1,6 @@
 import { isLoggedIn } from "./controllers/_utils";
-import { errorObj, successObj } from "../config/settings";
 import custCtrl from "./controllers/customer";
 import empCtrl from "./controllers/employee";
-import CustSchema from "../app/models/customer";
-import TicketSchema from "../app/models/tickets";
 import TicketCtrl from "./controllers/ticket";
 import moment from "moment";
 const bcrypt = require('bcrypt');
@@ -62,15 +59,6 @@ export default (app, passport) => {
 
   app.route("/register/customer")
     .post(async (req, res) => {
-      //check if id exist in database if yes => Show already exist
-      if (
-        await CustSchema.findOne({ emailId: req.body.emailId })
-        ||
-        await CustSchema.findOne({ contactNo: req.body.contactNo })
-      ) {
-        res.send("customer already present")
-        return;
-      }
       const customer = await custCtrl.add(req.body);
       res.send(customer)
     })
@@ -163,19 +151,19 @@ export default (app, passport) => {
   app
     .route("/employee/:id/dashboard")
     .get(async (req, res) => {
-      const ticketDetails = await TicketCtrl.dashboard({ empId: req.params.id })
-      const assignedTickets = await TicketSchema.count({ empId: req.params.id })
-      const activeTickets = await TicketCtrl.listTickets({ empId: req.params.id, status: "A" })
-      const resolvedTickets = await TicketCtrl.listTickets({ empId: req.params.id, status: "C" })
-      const ticketsToday = await TicketCtrl.listTickets({ empId: req.params.id, created_at: { $lte: moment().endOf('day'), $gte: moment().startOf('day') } });
+      const data = await TicketCtrl.dashboard({ empId: req.params.id })
+      const assignedTickets = await TicketCtrl.count({ empId: req.params.id })
+      const activeTickets = await TicketCtrl.count({ empId: req.params.id, status: "A" })
+      const resolvedTickets = await TicketCtrl.count({ empId: req.params.id, status: "C" })
+      const ticketsToday = await TicketCtrl.count({ empId: req.params.id, created_at: { $lte: moment().endOf('day'), $gte: moment().startOf('day') } });
 
       const ticketLength = {
         assigned: assignedTickets,
-        active: activeTickets.ticket.length,
-        resolved: resolvedTickets.ticket.length,
-        today: ticketsToday.ticket.length,
+        active: activeTickets,
+        resolved: resolvedTickets,
+        today: ticketsToday,
       }
-      res.send({ ...ticketLength, ticketDetails });
+      res.send({ ...ticketLength, ...data });
     })
 
   app
@@ -194,9 +182,9 @@ export default (app, passport) => {
     })
 
   app
-    .route("/detailedticket/:id")
+    .route("/detailedticket/:_id")
     .get(async (req, res) => {
-      const ticketDetails = await TicketCtrl.listTickets({ _id: req.params.id })
+      const ticketDetails = await TicketCtrl.listTickets({ _id: req.params._id })
       res.send(ticketDetails);
     })
   //========================================================================================

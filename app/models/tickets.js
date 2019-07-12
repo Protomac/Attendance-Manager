@@ -5,12 +5,12 @@ class TicketsSchema extends Schema {
     const user = super(
       {
         ticketId: { type: String },
-        status: { type: String },
+        status: { type: String, default: "N"},
         custId: { type: String },
         empId: { type: String },
-        description:String,
-        comments:[],
-        category: String,
+        description:{ type: String, default: ""},
+        comments:{ type: [], default: []},
+        category: { type: String, default: "Others"},
         opendOn: Date,
         updatedOn: Date,
         priority: String,
