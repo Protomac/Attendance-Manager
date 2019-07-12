@@ -4,9 +4,16 @@ class AddEmployee extends Schema {
   constructor() {
     const user = super(
       {
-        employeeId: { type: Number },
-        name: String,
-        contactnumber: { type: Number, unique: true }
+        empId: { type: Number, unique: true },
+        check: { type: String, enum: ['emp', 'admin'], default: 'emp' },
+        name: { type: String },
+        email: { type: String, unique: true },
+        password: { type: String },
+        mobile: { type: Number, unique: true },
+        address: { type: String },
+        gender: { type: String },
+        salary: { type: Number },
+        joningDate: { type: Date }
       },
       { timestamps: { createdAt: "created_at" } }
     );
